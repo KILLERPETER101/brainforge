@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Match | BrainForge</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --bg-body: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; }
+
+        /* Sidebar Navigation (Matches Ecosystem) */
+        aside {
+            width: 280px; background: white; border-right: 1px solid #e2e8f0;
+            display: flex; flex-direction: column; padding: 2rem;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 3rem; text-decoration: none; }
+        .logo-img { height: 50px; width: auto; }
+        .brand-name { font-weight: 900; font-size: 1.2rem; color: var(--primary); letter-spacing: -1px; }
+
+        .nav-menu { flex: 1; }
+        .nav-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px; 
+            text-decoration: none; color: var(--text-muted); font-weight: 600; 
+            border-radius: 12px; margin-bottom: 8px; transition: 0.2s;
+        }
+        .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-item:hover:not(.active) { background: #f1f5f9; color: var(--primary); }
+
+        /* Main Content */
+        main { flex: 1; overflow-y: auto; padding: 2rem 3rem; }
+        
+        .header-section { margin-bottom: 40px; }
+        .match-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+
+        /* Match Cards */
+        .match-card {
+            background: white; border-radius: 24px; border: 1px solid #e2e8f0;
+            padding: 30px; position: relative; transition: 0.3s;
+        }
+        .match-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+        
+        .percentage {
+            position: absolute; top: 20px; right: 20px;
+            background: #22c55e; color: white; padding: 5px 12px;
+            border-radius: 50px; font-size: 0.75rem; font-weight: 800;
+        }
+
+        .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .avatar-circle { width: 55px; height: 55px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        
+        .profile-info h3 { font-size: 1.1rem; color: var(--primary); }
+        .profile-info p { font-size: 0.85rem; color: var(--text-muted); }
+
+        .subjects { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+        .subject-tag { font-size: 0.7rem; background: var(--bg-body); padding: 5px 10px; border-radius: 6px; border: 1px solid #e2e8f0; }
+
+        .btn-connect {
+            width: 100%; padding: 12px; background: var(--primary); color: white;
+            border: none; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-connect:hover { background: var(--accent); }
+
+        /* Footer Section */
+        .match-footer { margin-top: 60px; padding: 40px 0; border-top: 1px solid #e2e8f0; color: var(--text-muted); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <a href="index.html" class="brand">
+            <img src="logo.jpg" alt="BrainForge" class="logo-img">
+            <span class="brand-name">BrainForge</span>
+        </a>
+        <div class="nav-menu">
+            <a href="resources.html" class="nav-item">📚 Resources</a>
+            <a href="collaboration.html" class="nav-item">🤝 Collaboration</a>
+            <a href="studymatch.html" class="nav-item active">🎯 Study Match</a>
+            <a href="#" class="nav-item">📊 Productivity</a>
+        </div>
+        <a href="index.html" class="nav-item" style="color: #ef4444; margin-top: auto;">🚪 Logout</a>
+    </aside>
+
+    <main>
+        <div class="header-section">
+            <h1 style="font-size: 2.2rem; font-weight: 900; letter-spacing: -1px;">Smart Study Match</h1>
+            <p style="color: var(--text-muted);">Based on your program (BSCS), here are your top peer matches.</p>
+        </div>
+
+        <div class="match-grid">
+            <div class="match-card">
+                <div class="percentage">98% Match</div>
+                <div class="profile-header">
+                    <div class="avatar-circle">👨‍💻</div>
+                    <div class="profile-info">
+                        <h3>David Chen</h3>
+                        <p>BS Computer Science • Year 3</p>
+                    </div>
+                </div>
+                <div class="subjects">
+                    <span class="subject-tag">Data Structures</span>
+                    <span class="subject-tag">Algorithms</span>
+                    <span class="subject-tag">Python</span>
+                </div>
+                <button class="btn-connect">Send Invite</button>
+            </div>
+
+            <div class="match-card">
+                <div class="percentage">85% Match</div>
+                <div class="profile-header">
+                    <div class="avatar-circle">👩‍🔬</div>
+                    <div class="profile-info">
+                        <h3>Sarah Gomez</h3>
+                        <p>BS Information Tech • Year 3</p>
+                    </div>
+                </div>
+                <div class="subjects">
+                    <span class="subject-tag">Database Systems</span>
+                    <span class="subject-tag">Web Dev</span>
+                    <span class="subject-tag">UI/UX</span>
+                </div>
+                <button class="btn-connect">Send Invite</button>
+            </div>
+
+            <div class="match-card">
+                <div class="percentage">72% Match</div>
+                <div class="profile-header">
+                    <div class="avatar-circle">🧑‍🎓</div>
+                    <div class="profile-info">
+                        <h3>James Wilson</h3>
+                        <p>BS Computer Science • Year 2</p>
+                    </div>
+                </div>
+                <div class="subjects">
+                    <span class="subject-tag">Calculus I</span>
+                    <span class="subject-tag">Discrete Math</span>
+                    <span class="subject-tag">C++</span>
+                </div>
+                <button class="btn-connect">Send Invite</button>
+            </div>
+        </div>
+
+        <footer class="match-footer">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                <div>
+                    <h4 style="color: var(--accent); margin-bottom: 10px;">Our Vision</h4>
+                    <p>Creating a unified academic ecosystem for student collaboration.</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--accent); margin-bottom: 10px;">Our Mission</h4>
+                    <p>Transforming scattered digital tools into a single seamless platform.</p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+</body>
+</html>
