@@ -1,0 +1,50 @@
+/* Reuse the fonts and resets from your previous index page */
+body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f9f9f9; color: #333; }
+
+/* Navigation Styling */
+nav { display: flex; justify-content: space-between; padding: 1rem 2rem; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+nav a { text-decoration: none; color: #555; margin-left: 20px; font-weight: 500; }
+nav a.active { color: #007bff; font-weight: bold; } /* Highlights current page */
+
+.container { max-width: 1000px; margin: 40px auto; padding: 20px; }
+
+/* Header Styling */
+.page-header { text-align: center; margin-bottom: 50px; }
+.page-header h1 { color: #2c3e50; font-size: 2.5rem; margin-bottom: 10px; }
+.intro-text { max-width: 700px; margin: 0 auto; color: #666; font-size: 1.1rem; line-height: 1.6; }
+
+/* THE GRID SYSTEM */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Auto-responsive columns */
+    gap: 30px; /* Space between cards */
+    margin-bottom: 50px;
+}
+
+/* Card Styling */
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-align: center;
+    border-top: 4px solid #007bff; /* Adds a nice color accent */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Moves up slightly when hovered */
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+}
+
+.icon { font-size: 3rem; margin-bottom: 15px; }
+.card h3 { margin-top: 0; color: #333; }
+.card p { color: #666; font-size: 0.95rem; }
+
+/* CTA Button */
+.cta-section { text-align: center; margin-top: 40px; }
+.btn {
+    display: inline-block; padding: 12px 24px; background-color: #28a745; 
+    color: white; text-decoration: none; border-radius: 6px; font-weight: bold;
+}
+.btn:hover { background-color: #218838; }

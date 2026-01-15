@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Hub | BrainForge</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --bg-body: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); display: flex; height: 100vh; }
+
+        /* Sidebar Navigation */
+        aside {
+            width: 280px; background: white; border-right: 1px solid #e2e8f0;
+            display: flex; flex-direction: column; padding: 2rem;
+        }
+        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 3rem; text-decoration: none; }
+        .logo-img { height: 50px; width: auto; }
+        .brand-name { font-weight: 900; font-size: 1.2rem; color: var(--primary); letter-spacing: -1px; }
+
+        .nav-menu { flex: 1; }
+        .nav-item { 
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px; 
+            text-decoration: none; color: var(--text-muted); font-weight: 600; 
+            border-radius: 12px; margin-bottom: 8px; transition: 0.2s;
+        }
+        .nav-item.active { background: var(--accent-soft); color: var(--accent); }
+        .nav-item:hover:not(.active) { background: #f1f5f9; color: var(--primary); }
+
+        /* Main Content Area */
+        main { flex: 1; overflow-y: auto; padding: 2rem 3rem; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .welcome-text h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; }
+
+        /* Gamified Rewards Card (Noticeable Top Section) */
+        .rewards-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, #1e293b 100%);
+            border-radius: 24px; padding: 2rem; color: white;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .reward-points { text-align: right; }
+        .points-val { font-size: 2.5rem; font-weight: 900; color: #fbbf24; }
+
+        /* Dashboard Grid */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        
+        .card { background: white; border-radius: 24px; padding: 1.5rem; border: 1px solid #e2e8f0; }
+        .card-header { display: flex; justify-content: space-between; margin-bottom: 1.5rem; }
+        .card-title { font-weight: 800; font-size: 1.1rem; }
+
+        /* Productivity Progress Bars */
+        .task-item { margin-bottom: 1.5rem; }
+        .task-info { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; font-weight: 600; }
+        .progress-container { width: 100%; height: 10px; background: #f1f5f9; border-radius: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--accent); border-radius: 10px; transition: 1s ease-out; }
+
+        .btn-action {
+            background: var(--accent); color: white; border: none; padding: 10px 20px;
+            border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        }
+        .btn-action:hover { opacity: 0.9; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <a href="../index.html" class="brand">
+            <img src="../logo.jpg" alt="BrainForge" class="logo-img">
+            <span class="brand-name">BrainForge</span>
+        </a>
+        <div class="nav-menu">
+            <a href="#" class="nav-item active">📊 Dashboard</a>
+            <a href="#" class="nav-item">🤝 Study Match</a>
+            <a href="#" class="nav-item">📚 Resources</a>
+            <a href="#" class="nav-item">⚙️ Settings</a>
+        </div>
+        <a href="../index.html" class="nav-item" style="color: #ef4444;">🚪 Logout</a>
+    </aside>
+
+    <main>
+        <header>
+            <div class="welcome-text">
+                <h1>Welcome Back, Scholar!</h1>
+                <p style="color: var(--text-muted)">Here’s your academic progress for today.</p>
+            </div>
+            <button class="btn-action" onclick="addPoints()">+ Complete Task</button>
+        </header>
+
+        <div class="rewards-banner">
+            <div>
+                <h2 style="font-size: 1.5rem; margin-bottom: 5px;">Forge Milestone: Apprentice</h2>
+                <p style="opacity: 0.8;">You are 250 points away from "Scholar" rank!</p>
+            </div>
+            <div class="reward-points">
+                <p style="text-transform: uppercase; font-size: 0.7rem; font-weight: 800; opacity: 0.8;">Total Forge Points</p>
+                <div class="points-val" id="points">1,250</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Institutional Deadlines</span>
+                    <span style="color: var(--accent); font-weight: 700; font-size: 0.8rem;">View All</span>
+                </div>
+                
+                <div class="task-item">
+                    <div class="task-info"><span>Thesis Chapter 1: Methodology</span> <span>75%</span></div>
+                    <div class="progress-container"><div class="progress-bar" style="width: 75%;"></div></div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-info"><span>Group Study: Advanced Calculus</span> <span>40%</span></div>
+                    <div class="progress-container"><div class="progress-bar" style="width: 40%; background: #8b5cf6;"></div></div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-info"><span>Resource Compilation</span> <span>90%</span></div>
+                    <div class="progress-container"><div class="progress-bar" style="width: 90%; background: #10b981;"></div></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Study Match</span>
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Suggested peers based on your subjects:</p>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%;"></div>
+                        <div><p style="font-weight: 700; font-size: 0.9rem;">Alex Rivera</p><p style="font-size: 0.75rem;">Calculus II</p></div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; background: #ddd; border-radius: 50%;"></div>
+                        <div><p style="font-weight: 700; font-size: 0.9rem;">Sarah Chen</p><p style="font-size: 0.75rem;">Methodology</p></div>
+                    </div>
+                </div>
+                <button class="btn-action" style="width: 100%; margin-top: 20px; background: transparent; border: 2px solid var(--accent); color: var(--accent);">Find More Matches</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentPoints = 1250;
+        function addPoints() {
+            currentPoints += 50;
+            document.getElementById('points').innerText = currentPoints.toLocaleString();
+            alert("Task Completed! You earned +50 Forge Points! 🏆");
+        }
+    </script>
+</body>
+</html>
