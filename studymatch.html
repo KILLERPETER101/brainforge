@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Match | BrainForge</title>
+    <style>
+        :root {
+            --primary: #0f172a; --accent: #2563eb; --bg: #f8fafc;
+            --text-main: #1e293b; --text-muted: #64748b;
+            --sidebar-width: 280px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; min-height: 100vh; }
+
+        /* Sidebar Navigation */
+        aside { 
+            width: var(--sidebar-width); background: white; height: 100vh; 
+            border-right: 1px solid #e2e8f0; padding: 2rem; position: fixed; 
+        }
+
+        main { 
+            margin-left: var(--sidebar-width); padding: 3rem; 
+            width: calc(100% - var(--sidebar-width)); 
+        }
+
+        /* Controls Area */
+        .header-actions { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; gap: 20px; flex-wrap: wrap; }
+        .btn-open-modal { background: var(--primary); color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-open-modal:hover { background: var(--accent); transform: translateY(-2px); }
+
+        .filter-group { display: flex; gap: 10px; flex: 1; }
+        select, input[type="text"] { padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit; }
+
+        /* Grid & Cards */
+        .match-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
+        .student-card { background: white; border-radius: 24px; padding: 25px; border: 1px solid #e2e8f0; transition: 0.3s; }
+        .student-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+
+        .program-tag { font-size: 0.7rem; font-weight: 800; padding: 5px 12px; border-radius: 20px; background: #eff6ff; color: var(--accent); margin-bottom: 15px; display: inline-block; }
+        .subject-badge { display: inline-block; padding: 4px 10px; background: #f1f5f9; border-radius: 8px; font-size: 0.8rem; font-weight: 600; margin: 0 5px 5px 0; }
+
+        /* Modal Styles */
+        .modal-overlay { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 35px; border-radius: 28px; width: 90%; max-width: 450px; }
+        .modal-content input, .modal-content textarea, .modal-content select { width: 100%; margin-bottom: 15px; padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <h2 style="font-weight: 900; margin-bottom: 2rem;">BrainForge</h2>
+        <nav style="display: flex; flex-direction: column; gap: 8px;">
+            <a href="index.html" style="text-decoration:none; color: var(--text-muted); padding: 10px;">🏠 Dashboard</a>
+            <a href="resources.html" style="text-decoration:none; color: var(--text-muted); padding: 10px;">📚 Repository</a>
+            <a href="collaboration.html" style="text-decoration:none; color: var(--text-muted); padding: 10px;">🤝 Collab Hub</a>
+            <a href="studymatch.html" style="text-decoration:none; color: var(--accent); font-weight: 800; background: #eff6ff; padding: 10px; border-radius: 8px;">🎯 Study Match</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 5px;">Study Match</h1>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Connect with students in your program for peer-to-peer learning.</p>
+        </header>
+
+        <div class="header-actions">
+            <div class="filter-group">
+                <select id="programFilter">
+                    <option value="all">All Programs</option>
+                    <option value="DMET">Mechanical (DMET)</option>
+                    <option value="BSIT">Computing (BSIT)</option>
+                    <option value="BSCE">Civil Eng (BSCE)</option>
+                </select>
+                <input type="text" id="subjectSearch" placeholder="Search by subject..." style="flex:1;">
+            </div>
+            <button class="btn-open-modal" id="openMatchModal">➕ Post My Profile</button>
+        </div>
+
+        <div class="match-grid" id="matchGrid"></div>
+    </main>
+
+    <div class="modal-overlay" id="matchModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; font-weight: 900;">Find a Partner</h2>
+            <form id="matchForm">
+                <input type="text" id="mName" placeholder="Your Name" required>
+                <select id="mProgram" required>
+                    <option value="DMET">Mechanical Tech (DMET)</option>
+                    <option value="BSIT">Information Tech (BSIT)</option>
+                    <option value="BSCE">Civil Engineering (BSCE)</option>
+                </select>
+                <input type="text" id="mSubjects" placeholder="Subjects (comma separated: Calculus, Java)" required>
+                <textarea id="mBio" placeholder="What are you looking for? (e.g. Help with Lab 3)" rows="3" required></textarea>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" id="closeMatchModal" style="flex: 1; padding: 12px; border: none; border-radius: 10px; cursor: pointer;">Cancel</button>
+                    <button type="submit" style="flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer;">Post Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let students = [
+            { name: "Alex Rivera", program: "DMET", subjects: ["Thermodynamics", "Machine Shop"], bio: "Looking for a group to practice lathe operations." },
+            { name: "Sam Wilson", program: "BSIT", subjects: ["Java", "Data Structures"], bio: "I can help with backend logic. Need help with CSS." },
+            { name: "Chris P.", program: "BSCE", subjects: ["Calculus 3", "Statics"], bio: "Preparing for the midterms. Let's solve plates together." }
+        ];
+
+        const grid = document.getElementById('matchGrid');
+        const modal = document.getElementById('matchModal');
+
+        function render(prog = 'all', search = '') {
+            grid.innerHTML = '';
+            const filtered = students.filter(s => {
+                const matchesProg = prog === 'all' || s.program === prog;
+                const matchesSearch = s.subjects.some(sub => sub.toLowerCase().includes(search.toLowerCase()));
+                return matchesProg && matchesSearch;
+            });
+
+            filtered.forEach(s => {
+                grid.innerHTML += `
+                    <div class="student-card">
+                        <span class="program-tag">${s.program}</span>
+                        <h3 style="margin-bottom:10px;">${s.name}</h3>
+                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:15px;">${s.bio}</p>
+                        <div>${s.subjects.map(sub => `<span class="subject-badge">${sub}</span>`).join('')}</div>
+                        <button style="width:100%; padding:10px; margin-top:20px; border:1px solid var(--accent); border-radius:10px; background:none; color:var(--accent); font-weight:700; cursor:pointer;">Request Connection</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Modal Logic
+        document.getElementById('openMatchModal').onclick = () => modal.style.display = 'flex';
+        document.getElementById('closeMatchModal').onclick = () => modal.style.display = 'none';
+
+        document.getElementById('matchForm').onsubmit = (e) => {
+            e.preventDefault();
+            const newStudent = {
+                name: document.getElementById('mName').value,
+                program: document.getElementById('mProgram').value,
+                subjects: document.getElementById('mSubjects').value.split(',').map(s => s.trim()),
+                bio: document.getElementById('mBio').value
+            };
+            students.unshift(newStudent);
+            render();
+            modal.style.display = 'none';
+            e.target.reset();
+        };
+
+        // Filter Logic
+        document.getElementById('programFilter').addEventListener('change', (e) => render(e.target.value, document.getElementById('subjectSearch').value));
+        document.getElementById('subjectSearch').addEventListener('input', (e) => render(document.getElementById('programFilter').value, e.target.value));
+
+        render();
+    </script>
+</body>
+</html>

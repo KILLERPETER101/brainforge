@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity Hub | BrainForge</title>
+    <style>
+        :root {
+            --primary: #0f172a; --accent: #2563eb; --bg: #f8fafc;
+            --text-main: #1e293b; --text-muted: #64748b;
+            --sidebar-width: 280px;
+            --high: #ef4444; --medium: #f59e0b; --low: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* SIDEBAR (Consistent with other pages) */
+        aside { width: var(--sidebar-width); background: white; height: 100vh; border-right: 1px solid #e2e8f0; padding: 2rem; position: fixed; left: 0; top: 0; z-index: 100; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px; color: var(--text-muted); text-decoration: none; font-weight: 600; border-radius: 10px; margin-bottom: 8px; }
+        .nav-item.active { background: #eff6ff; color: var(--accent); }
+
+        /* MAIN */
+        main { margin-left: var(--sidebar-width); padding: 3rem 5%; width: calc(100% - var(--sidebar-width)); display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
+        header { grid-column: 1 / 3; }
+
+        /* TIMER */
+        .timer-card { background: linear-gradient(135deg, var(--primary), #1e293b); color: white; padding: 40px; border-radius: 24px; text-align: center; grid-column: 1 / 3; }
+        .timer-display { font-size: 5rem; font-weight: 900; margin: 10px 0; font-variant-numeric: tabular-nums; }
+        .timer-input { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px; border-radius: 8px; width: 80px; text-align: center; font-size: 1.2rem; }
+
+        /* TASK MANAGER */
+        .tasks-container { background: white; padding: 30px; border-radius: 24px; border: 1px solid #e2e8f0; }
+        .input-group { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 10px; margin-bottom: 25px; }
+        input, select { padding: 12px; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 0.9rem; }
+
+        .task-item { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f1f5f9; }
+        .priority-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 10px; }
+        .deadline-text { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: block; margin-top: 2px; }
+
+        /* PROGRESS */
+        .stats-panel { background: white; padding: 30px; border-radius: 24px; border: 1px solid #e2e8f0; height: fit-content; text-align: center; }
+        .progress-circle { width: 160px; height: 160px; border-radius: 50%; margin: 20px auto; display: flex; align-items: center; justify-content: center; position: relative; }
+        .progress-circle::after { content: ""; position: absolute; width: 130px; height: 130px; background: white; border-radius: 50%; }
+        .percentage-text { position: relative; z-index: 10; font-weight: 900; font-size: 1.8rem; }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <h2 style="font-weight:900; margin-bottom:2rem;">BrainForge</h2>
+        <nav>
+            <a href="index.html" class="nav-item">🏠 Dashboard</a>
+            <a href="productivity.html" class="nav-item active">📊 Productivity</a>
+            <a href="resources.html" class="nav-item">📚 Repository</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header><h1>Productivity Hub</h1></header>
+
+        <section class="timer-card">
+            <div style="margin-bottom: 10px;">
+                <label>Minutes: </label>
+                <input type="number" id="durationInput" class="timer-input" value="25">
+            </div>
+            <div class="timer-display" id="timer">25:00</div>
+            <button id="startBtn" style="padding: 12px 30px; border-radius: 12px; border: none; font-weight: 700; cursor: pointer; background: white; color: var(--primary);">Start Focus</button>
+        </section>
+
+        <section class="tasks-container">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <h3 style="font-weight:900;">Upcoming Deadlines</h3>
+                <button onclick="clearFinished()" style="color:#ef4444; background:none; border:none; cursor:pointer; font-weight:700; font-size: 0.8rem;">Clear Finished</button>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="taskInput" placeholder="Task Name">
+                <select id="priorityInput">
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                </select>
+                <input type="date" id="dateInput">
+                <button id="addTaskBtn" style="background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight:700; cursor:pointer;">Add</button>
+            </div>
+
+            <div id="taskList"></div>
+        </section>
+
+        <section class="stats-panel">
+            <h3 style="font-weight:900;">Daily Goal</h3>
+            <div class="progress-circle" id="progCircle">
+                <span class="percentage-text" id="percentText">0%</span>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- TIMER LOGIC ---
+        let timeLeft = 25 * 60;
+        let timerId = null;
+        const timerDisplay = document.getElementById('timer');
+        const durationInput = document.getElementById('durationInput');
+
+        durationInput.onchange = () => { timeLeft = durationInput.value * 60; updateTimerDisplay(); };
+        function updateTimerDisplay() {
+            let mins = Math.floor(timeLeft / 60);
+            let secs = timeLeft % 60;
+            timerDisplay.innerHTML = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        document.getElementById('startBtn').onclick = function() {
+            if (timerId) { clearInterval(timerId); timerId = null; this.innerHTML = "Resume"; }
+            else {
+                timerId = setInterval(() => { timeLeft--; updateTimerDisplay(); if(timeLeft <= 0) clearInterval(timerId); }, 1000);
+                this.innerHTML = "Pause";
+            }
+        };
+
+        // --- TASK LOGIC WITH DEADLINES ---
+        let tasks = JSON.parse(localStorage.getItem('bf_tasks_v3')) || [];
+        const pColors = { high: '#ef4444', medium: '#f59e0b', low: '#10b981' };
+
+        function saveAndRender() {
+            // SORTING: High Priority first, then by Date
+            tasks.sort((a, b) => {
+                const pMap = { high: 0, medium: 1, low: 2 };
+                if (pMap[a.priority] !== pMap[b.priority]) return pMap[a.priority] - pMap[b.priority];
+                return new Date(a.date) - new Date(b.date);
+            });
+
+            localStorage.setItem('bf_tasks_v3', JSON.stringify(tasks));
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+
+            tasks.forEach((t, i) => {
+                list.innerHTML += `
+                    <div class="task-item">
+                        <div style="display:flex; align-items:center;">
+                            <div class="priority-dot" style="background: ${pColors[t.priority]}"></div>
+                            <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${i})" style="margin-right:12px;">
+                            <div>
+                                <span style="${t.done ? 'text-decoration:line-through; color:gray;' : 'font-weight:600;'}">${t.text}</span>
+                                <span class="deadline-text">📅 Due: ${t.date || 'No Date'}</span>
+                            </div>
+                        </div>
+                        <button onclick="removeTask(${i})" style="color:#cbd5e1; background:none; border:none; cursor:pointer; font-size:1.2rem;">×</button>
+                    </div>
+                `;
+            });
+            updateProgress();
+        }
+
+        document.getElementById('addTaskBtn').onclick = () => {
+            const name = document.getElementById('taskInput').value;
+            const priority = document.getElementById('priorityInput').value;
+            const date = document.getElementById('dateInput').value;
+            if (!name) return;
+            tasks.push({ text: name, priority: priority, date: date, done: false });
+            document.getElementById('taskInput').value = '';
+            saveAndRender();
+        };
+
+        window.toggleTask = (i) => { tasks[i].done = !tasks[i].done; saveAndRender(); };
+        window.removeTask = (i) => { tasks.splice(i, 1); saveAndRender(); };
+        window.clearFinished = () => { tasks = tasks.filter(t => !t.done); saveAndRender(); };
+
+        function updateProgress() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.done).length;
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+            document.getElementById('progCircle').style.background = `conic-gradient(#2563eb ${percent}%, #f1f5f9 0%)`;
+            document.getElementById('percentText').innerHTML = percent + "%";
+        }
+
+        saveAndRender();
+    </script>
+</body>
+</html>
